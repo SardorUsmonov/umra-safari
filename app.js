@@ -151,3 +151,23 @@ $('source-links').innerHTML = sources.map(source => `<a href="${escapeHTML(sourc
 $('print-sheet').innerHTML = `<h1>Umra safari</h1><p class="print-intro">Bir sahifalik cheklist / 5 bosqich / 25 band</p><div class="print-columns">${stages.map(stage => `<section class="print-section"><h2>${stage.number} / ${escapeHTML(stage.title)}</h2>${stage.items.map(item => `<div class="print-item"><span class="print-box"></span><strong>${escapeHTML(item.title)}</strong>${item.detail ? `<small>${escapeHTML(item.detail)}</small>` : ''}</div>`).join('')}</section>`).join('')}</div><p class="print-footer">Viza, ruxsat va tibbiy talablarni safar oldidan qayta tekshiring. Manbalar: Nusuk, Haramayn, Saudiya SSV.</p>`;
 selectStage(activeIndex, { save: false });
 updateStorageNote();
+
+// Claude artefakti ichida oddiy "download" havolasi ishlamaydi; u yerda PDF platformaning saqlash oynasi orqali beriladi.
+// Oddiy hostingda (GitHub Pages, localhost) bu blok hech narsa qilmaydi va havola odatdagidek yuklab oladi.
+if (typeof window.claude?.use === 'function') {
+  window.claude.use('downloads').then(downloads => {
+    if (!downloads) return;
+    document.addEventListener('click', async event => {
+      const link = event.target.closest('a[download]');
+      if (!link) return;
+      event.preventDefault();
+      try {
+        const response = await fetch(link.href);
+        if (!response.ok) throw new Error(response.statusText);
+        await downloads.save({ filename: 'umra-safari-cheklist.pdf', data: await response.blob() });
+      } catch (error) {
+        if (error?.code !== 'declined') $('live-status').textContent = 'PDFni saqlab bo‘lmadi. Keyinroq qayta urinib ko‘ring.';
+      }
+    });
+  }).catch(() => {});
+}
