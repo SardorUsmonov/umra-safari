@@ -153,21 +153,59 @@ selectStage(activeIndex, { save: false });
 updateStorageNote();
 
 // Claude artefakti ichida oddiy "download" havolasi ishlamaydi; u yerda PDF platformaning saqlash oynasi orqali beriladi.
-// Oddiy hostingda (GitHub Pages, localhost) bu blok hech narsa qilmaydi va havola odatdagidek yuklab oladi.
+// Oddiy hostingda (GitHub Pages, localhost) window.claude yo‘q, bu blok ishlamaydi va havola odatdagidek yuklab oladi.
+const PDF_NAME = 'umra-safari-cheklist.pdf';
+
+function showToast(text) {
+  let toast = $('pdf-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'pdf-toast';
+    toast.className = 'pdf-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.append(toast);
+  }
+  toast.textContent = text;
+  toast.classList.add('is-visible');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove('is-visible'), 7000);
+}
+
 if (typeof window.claude?.use === 'function') {
-  window.claude.use('downloads').then(downloads => {
-    if (!downloads) return;
-    document.addEventListener('click', async event => {
-      const link = event.target.closest('a[download]');
-      if (!link) return;
-      event.preventDefault();
-      try {
-        const response = await fetch(link.href);
-        if (!response.ok) throw new Error(response.statusText);
-        await downloads.save({ filename: 'umra-safari-cheklist.pdf', data: await response.blob() });
-      } catch (error) {
-        if (error?.code !== 'declined') $('live-status').textContent = 'PDFni saqlab bo‘lmadi. Keyinroq qayta urinib ko‘ring.';
+  // Modulni darhol so‘raymiz; bosish esa modul tayyor bo‘lguncha ham ushlanadi.
+  const downloadsReady = window.claude.use('downloads').catch(() => null);
+  let saving = false;
+
+  async function savePdf(href) {
+    if (saving) return;
+    saving = true;
+    showToast('PDF tayyorlanmoqda…');
+    try {
+      const downloads = await downloadsReady;
+      if (!downloads) {
+        const opened = window.open(href, '_blank', 'noopener');
+        showToast(opened ? 'PDF yangi oynada ochildi.' : 'Bu oynada yuklab olish mavjud emas. Saytni brauzerda oching.');
+        return;
       }
-    });
-  }).catch(() => {});
+      const response = await fetch(href);
+      if (!response.ok) throw Object.assign(new Error(response.statusText), { code: `fayl_${response.status}` });
+      const blob = await response.blob();
+      if (!blob.size) throw Object.assign(new Error('empty'), { code: 'bo‘sh_fayl' });
+      await downloads.save({ filename: PDF_NAME, data: blob });
+      showToast('PDF saqlandi.');
+    } catch (error) {
+      if (error?.code === 'declined') showToast('Saqlash bekor qilindi.');
+      else showToast(`PDFni saqlab bo‘lmadi (${error?.code || error?.message || 'noma’lum xato'}).`);
+    } finally {
+      saving = false;
+    }
+  }
+
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[download]');
+    if (!link) return;
+    event.preventDefault();
+    savePdf(link.href);
+  });
 }
