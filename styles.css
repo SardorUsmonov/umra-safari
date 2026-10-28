@@ -12,4 +12,224 @@
 @media(max-width:600px){.container{width:calc(100% - 36px)}.header-inner{height:75px;gap:12px}.brand{font-size:23px}.brand-icon{width:34px;height:36px;gap:8px}.brand-icon svg{width:24px;height:24px}.header-pdf{font-size:10px;padding:10px 13px;gap:5px}.header-pdf .icon{width:17px;height:17px}.hero{grid-template-columns:1fr;gap:37px;padding-top:37px;padding-bottom:51px}.hero-copy>.eyebrow{font-size:9px}.hero h1{font-size:clamp(37px,8.5vw,47px);margin-top:17px;margin-bottom:19px;line-height:1.22}.hero-description{font-size:13px;max-width:430px}.hero-actions{gap:23px}.hero-actions .button{font-size:12px;min-height:47px}.hero-download{font-size:11px}.hero-meta{font-size:10px;gap:24px;margin-top:24px}.hero-meta>span+span:before{left:-13px}.hero-visual{width:84%;max-width:390px;margin:0 auto 16px;padding-right:8px}.hero-image{aspect-ratio:1.15;border-radius:200px 200px 13px 13px}.arch-outline{border-radius:200px 200px 17px 17px}.image-note{left:-18px;bottom:-19px;padding:12px 16px}.hero-flower{top:17px;font-size:38px;right:-16px}.hero-image figcaption{font-size:9px;left:22px;bottom:22px}.section-heading{margin-bottom:23px;align-items:start;gap:14px}.section-heading h2{font-size:26px;line-height:1.35;margin-top:8px}.section-heading>p{display:none}.eyebrow{font-size:9px;letter-spacing:1.3px}.checklist-section{padding-top:35px;padding-bottom:24px}.overall-card{padding:21px}.overall-value strong{font-size:29px}.stage-nav{gap:5px}.stage-tab{flex-basis:137px}.save-note{font-size:9px}.panel-heading{padding:24px 21px 20px;gap:8px}.panel-heading h3{font-size:25px}.panel-heading .eyebrow{font-size:8px;letter-spacing:1px}.panel-heading>div>p:last-child{font-size:11px}.stage-count{font-size:9px;padding:7px 9px}.item-list{padding:1px 20px 0}.check-item{gap:12px;padding:19px 0}.item-title{font-size:12px}.item-detail{font-size:11px;line-height:1.75}.check-item input{width:19px;height:19px;margin-top:2px}.panel-bottom{padding:17px 19px;gap:8px}.panel-bottom>span{font-size:9px;max-width:140px}.button-next{font-size:9px;padding:10px 12px;gap:6px}.button-back{width:36px;min-height:36px}.step-actions{gap:5px}.checklist-footnote{font-size:9px;gap:7px}.guide-section{padding-top:40px;padding-bottom:36px}.guide-label{display:none}.rites-grid{gap:25px 0}.rite{padding-top:22px;padding-right:17px}.rite+.rite{padding-left:18px}.rite:nth-child(3){padding-left:0}.rite-number{font-size:26px}.rite h3{font-size:21px;margin-top:8px}.rite p{font-size:11px;line-height:1.8;min-height:80px}.rite-key{font-size:9px;padding:6px 8px;margin-top:13px}.download-section{gap:15px;padding:23px 21px;margin-bottom:36px}.download-icon{width:40px;height:47px}.download-icon svg{width:26px;height:26px}.download-section>div:nth-child(2){flex:1;min-width:0}.download-section h2{font-size:19px;line-height:1.4}.download-section p{font-size:10px;line-height:1.7;margin-top:6px}.download-section>.button{margin:4px 0 0 55px;font-size:11px;min-height:44px}.footer-main{gap:9px;flex-wrap:wrap;padding-bottom:17px}.footer-brand{font-size:22px}.footer-main p{font-size:10px;flex-basis:100%;order:3}.back-top{font-size:9px;min-height:35px}.footer-sources{align-items:start;flex-direction:column;font-size:9px;gap:10px}.photo-credit{font-size:8px;line-height:1.9}.site-footer{padding-bottom:23px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 @media print{@page{size:A4;margin:12mm}body{background:#fff;color:#172c23}#site,.skip-link{display:none!important}.print-sheet{display:block;font-family:'Segoe UI',sans-serif}.print-sheet h1{font-family:Georgia,serif;font-size:24pt;margin:0 0 7pt;letter-spacing:0}.print-intro{font-size:9pt;color:#526052;margin-bottom:16pt}.print-columns{columns:2;column-gap:20pt}.print-section{break-inside:avoid;margin-bottom:14pt}.print-section h2{font-size:11pt;border-bottom:1px solid #aaa;padding-bottom:6pt;margin-bottom:7pt}.print-item{font-size:8.5pt;line-height:1.4;padding-left:14pt;position:relative;margin:0 0 7pt;break-inside:avoid}.print-box{width:7pt;height:7pt;border:1px solid #68786c;position:absolute;left:0;top:2pt}.print-item strong{font-weight:600}.print-item small{display:block;font-size:7.5pt;color:#526052}.print-footer{font-size:8pt;margin-top:12pt;border-top:1px solid #aaa;padding-top:8pt}a{color:inherit}}
-.pdf-toast{position:fixed;left:50%;bottom:24px;z-index:20;transform:translate(-50%,16px);opacity:0;pointer-events:none;max-width:calc(100% - 32px);padding:13px 20px;background:var(--green);color:#fff;font-size:13px;line-height:1.5;border-radius:100px;box-shadow:0 10px 30px rgba(15,30,21,.25);transition:opacity .2s,transform .2s}.pdf-toast.is-visible{opacity:1;transform:translate(-50%,0)}@media print{.pdf-toast{display:none}}
+
+/* ===== Interaktiv qo'shimchalar: sarlavha tugmalari, safar rejasi, o'z bandlari, tavof, xabar ===== */
+[hidden]{display:none!important}
+.header-tools{display:flex;align-items:center;gap:8px}
+.tool-button{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid #d6ddd1;background:transparent;color:var(--ink);display:grid;place-items:center;font-size:15px;font-weight:650;letter-spacing:-.4px;transition:background .18s,color .18s,border-color .18s}
+.tool-button:hover{background:var(--sage)}
+.tool-button[aria-pressed=true]{background:var(--green);border-color:var(--green);color:#fff}
+.tool-button sup{font-size:10px;margin-left:1px}
+.tool-button .icon-sun{display:none}
+[data-theme=dark] .tool-button .icon-sun{display:block}
+[data-theme=dark] .tool-button .icon-moon{display:none}
+
+.trip-card{margin-top:14px;padding:18px 18px 16px;background:var(--surface);border:1px solid #e2e7dc;border-radius:17px}
+.trip-top{display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:650;letter-spacing:1.3px;text-transform:uppercase;color:var(--gold)}
+.trip-fields{display:grid;gap:10px;margin-top:13px}
+.trip-fields label{display:grid;gap:5px;font-size:11px;font-weight:550;color:var(--muted)}
+.trip-fields input{width:100%;min-width:0;min-height:42px;padding:7px 10px;border:1px solid #d6ddd1;border-radius:10px;background:var(--paper);color:var(--ink);font:inherit;font-size:14px}
+.trip-fields input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px #194c3c1f}
+.trip-fields input[aria-invalid]{border-color:#b3472b}
+.trip-empty{font-size:11px;line-height:1.65;color:var(--muted);margin-top:12px}
+.trip-error{font-size:12px;line-height:1.6;color:#a33a20;margin-top:10px}
+.trip-result{margin-top:14px;padding-top:14px;border-top:1px solid #edf0e9}
+.trip-headline{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
+.trip-headline strong{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.05;color:var(--green);font-variant-numeric:tabular-nums}
+.trip-headline span{font-size:12px;color:var(--muted)}
+.trip-tip{font-size:12px;line-height:1.7;margin-top:9px;color:var(--ink)}
+.trip-go{margin-top:12px;width:100%;min-height:42px;padding:9px 14px;border:0;border-radius:100px;background:#e9efe3;color:var(--green);font-size:12px;font-weight:600;line-height:1.35;transition:background .18s}
+.trip-go:hover{background:#dce6d6}
+.trip-go:disabled{cursor:default;opacity:.7}
+.stage-now{display:inline-block;margin-left:7px;padding:2px 7px;border-radius:100px;background:#f5e9d6;color:#7a5524;font-size:9px;font-weight:650;letter-spacing:.6px;text-transform:uppercase;vertical-align:1px}
+
+.custom-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:16px 33px 22px;border-top:1px solid #edf0e9}
+.custom-form input{min-width:0;min-height:46px;padding:10px 15px;border:1px dashed #c3ccbd;border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;font-size:14px}
+.custom-form input::placeholder{color:#8b948a}
+.custom-form input:focus{outline:none;border-style:solid;border-color:var(--green);box-shadow:0 0 0 3px #194c3c1f}
+.custom-form input[aria-invalid]{border-color:#b3472b;border-style:solid}
+.custom-add{min-height:46px;display:inline-flex;align-items:center;gap:7px;padding:0 18px;border:0;border-radius:100px;background:var(--green);color:#fff;font-size:13px;font-weight:600;transition:background .18s}
+.custom-add:hover{background:var(--green-hover)}
+.custom-error{grid-column:1/-1;font-size:12px;color:#a33a20}
+.check-item.is-custom{align-items:center}
+.check-item.is-custom input{align-self:flex-start;margin-top:4px}
+.is-custom .item-copy{flex:1;cursor:pointer}
+.item-tag{display:inline-block;margin-top:6px;padding:3px 9px;border-radius:100px;background:#f5e9d6;color:#7a5524;font-size:10px;font-weight:600}
+.item-delete{flex:none;width:40px;height:40px;margin:-6px -6px -6px 0;border:0;border-radius:50%;background:transparent;color:var(--muted);display:grid;place-items:center;transition:background .18s,color .18s}
+.item-delete:hover{background:#fbe9e4;color:#a33a20}
+.check-item.is-new{animation:item-in .45s ease-out}
+@keyframes item-in{from{opacity:0;transform:translateY(-6px);background:#f5e9d6}to{opacity:1;transform:none;background:transparent}}
+
+.tawaf-section{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:72px;align-items:center;padding-top:76px;padding-bottom:14px}
+.tawaf-copy h2{font-family:var(--serif);font-size:32px;font-weight:500;letter-spacing:-.7px;line-height:1.3;margin-top:11px;color:var(--green)}
+.tawaf-lead{max-width:460px;margin-top:14px;font-size:14px;line-height:1.85;color:var(--muted)}
+.tawaf-tips{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:12px;font-size:12px;line-height:1.7;color:var(--ink);max-width:460px}
+.tawaf-tips li{display:flex;gap:11px;align-items:baseline}
+.tawaf-tips li:before{content:'';width:6px;height:6px;flex:none;border-radius:50%;background:var(--gold);transform:translateY(-1px)}
+.tawaf-counter{display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 28px 22px;background:var(--surface);border:1px solid #e4e9df;border-radius:24px;box-shadow:0 7px 25px #1b301e05}
+.tawaf-ring{width:min(100%,280px);height:auto}
+.tawaf-seg{fill:none;stroke:#e3e8de;stroke-width:15;stroke-linecap:round;transition:stroke .35s}
+.tawaf-seg.is-done{stroke:var(--green)}
+.tawaf-section.is-complete .tawaf-seg.is-done{stroke:var(--gold)}
+.tawaf-start{fill:var(--gold)}
+.tawaf-kaaba rect{fill:#1f211e}
+.tawaf-kaaba .tawaf-kiswa,.tawaf-kaaba .tawaf-door{fill:#c49a52}
+.tawaf-walker{transform-origin:150px 150px;transition:transform .55s cubic-bezier(.3,.7,.3,1)}
+.tawaf-walker circle{fill:var(--gold);stroke:var(--surface);stroke-width:4}
+.tawaf-count{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-top:8px}
+.tawaf-count strong{font-family:var(--serif);font-size:56px;font-weight:500;line-height:1;color:var(--green);font-variant-numeric:tabular-nums}
+.tawaf-section.is-complete .tawaf-count strong{color:var(--gold)}
+.tawaf-count span{font-size:13px;color:var(--muted)}
+.tawaf-count strong.is-pop{animation:tawaf-pop .38s ease-out}
+@keyframes tawaf-pop{40%{transform:scale(1.14)}}
+.tawaf-status{min-height:44px;max-width:320px;margin-top:8px;font-size:13px;line-height:1.7;color:var(--ink)}
+.tawaf-plus{width:100%;min-height:64px;margin-top:12px;font-size:16px}
+.tawaf-plus:disabled{opacity:.45;cursor:default;transform:none}
+.tawaf-actions{display:flex;gap:8px;width:100%;margin-top:10px}
+.tawaf-actions button{flex:1;min-height:46px;border:1px solid #dce2d7;border-radius:100px;background:transparent;color:var(--green);font-size:12px;font-weight:600;transition:background .18s}
+.tawaf-actions button:hover:not(:disabled){background:var(--sage)}
+.tawaf-actions button:disabled{opacity:.35;cursor:default}
+.tawaf-mark{margin-top:12px}
+.tawaf-wake{min-height:18px;margin-top:10px;font-size:11px;color:var(--muted)}
+
+.toast{position:fixed;left:50%;bottom:24px;z-index:20;display:flex;align-items:center;gap:14px;max-width:calc(100% - 32px);padding:13px 20px;background:var(--green);color:#fff;font-size:13px;line-height:1.5;border-radius:100px;box-shadow:0 10px 30px rgba(15,30,21,.25);opacity:0;pointer-events:none;transform:translate(-50%,16px);transition:opacity .2s,transform .2s}
+.toast.has-action{padding:8px 8px 8px 20px}
+.toast.is-visible{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast-action{flex:none;min-height:36px;padding:0 16px;border:0;border-radius:100px;background:#ffffff26;color:#fff;font-size:12px;font-weight:650}
+.toast-action:hover{background:#ffffff3d}
+
+@media(max-width:1100px){.tawaf-section{gap:40px}}
+@media(max-width:850px){
+  .trip-card{margin-top:12px}
+  .trip-fields{grid-template-columns:1fr 1fr}
+  .trip-fields input{font-size:16px}
+  .stage-now{margin-left:5px;font-size:8px;padding:2px 6px}
+  .tawaf-section{grid-template-columns:minmax(0,1fr);gap:30px;padding-top:50px}
+  .tawaf-counter{max-width:460px;width:100%;margin:0 auto}
+}
+@media(max-width:600px){
+  .header-tools{gap:6px}
+  .tool-button{width:40px;height:40px;font-size:14px}
+  .header-pdf{padding:10px;border-radius:50%}
+  .header-pdf span{display:none}
+  .brand{font-size:21px;gap:9px}
+  .trip-card{padding:16px}
+  .trip-headline strong{font-size:27px}
+  .custom-form{padding:14px 20px 18px}
+  .custom-form input{font-size:16px}
+  .custom-add{padding:0 14px}
+  .custom-add span{display:none}
+  .tawaf-section{padding-top:40px;gap:24px}
+  .tawaf-copy h2{font-size:26px;line-height:1.35}
+  .tawaf-lead{font-size:13px}
+  .tawaf-tips{margin-top:18px}
+  .tawaf-counter{padding:20px 18px 18px;border-radius:20px}
+  .toast{bottom:16px;font-size:12px;border-radius:18px}
+}
+@media(max-width:360px){.brand-icon{display:none}}
+@media(prefers-reduced-motion:reduce){.tawaf-walker{transition:none}}
+@media print{.toast,.header-tools,.tawaf-section{display:none!important}}
+
+/* ===== Katta shrift ===== */
+.text-large .header-nav{font-size:16px}
+.text-large .hero-description{font-size:17px;line-height:1.75}
+.text-large .hero-meta{font-size:14px}
+.text-large .eyebrow{font-size:12px}
+.text-large .overall-top{font-size:14px}
+.text-large .overall-card>p,.text-large .save-note{font-size:14px;line-height:1.6}
+.text-large .stage-text strong{font-size:15px}
+.text-large .stage-text small{font-size:13px}
+.text-large .stage-num{font-size:13px}
+.text-large .panel-heading .eyebrow{font-size:12px}
+.text-large .panel-heading h3{font-size:30px}
+.text-large .panel-heading>div>p:last-child{font-size:16px;line-height:1.6}
+.text-large .stage-count{font-size:14px}
+.text-large .item-title{font-size:18px;line-height:1.55}
+.text-large .item-detail{font-size:16px;line-height:1.6}
+.text-large .item-tag{font-size:13px}
+.text-large .check-item input{width:26px;height:26px}
+.text-large .panel-bottom>span{font-size:15px;max-width:none}
+.text-large .button-next{font-size:15px}
+.text-large .checklist-footnote{font-size:14px}
+.text-large .trip-top{font-size:13px}
+.text-large .trip-fields label{font-size:14px}
+.text-large .trip-fields input,.text-large .custom-form input{font-size:17px}
+.text-large .trip-empty,.text-large .trip-tip{font-size:15px}
+.text-large .trip-headline span{font-size:15px}
+.text-large .trip-go,.text-large .custom-add{font-size:15px}
+.text-large .tawaf-lead{font-size:17px}
+.text-large .tawaf-tips{font-size:16px}
+.text-large .tawaf-status{font-size:17px}
+.text-large .tawaf-count span{font-size:16px}
+.text-large .tawaf-plus{font-size:19px;min-height:72px}
+.text-large .tawaf-actions button{font-size:15px}
+.text-large .tawaf-wake{font-size:14px}
+.text-large .rite p{font-size:16px;line-height:1.7}
+.text-large .rite-key{font-size:13px}
+.text-large .download-section p{font-size:15px}
+.text-large .footer-main p{font-size:14px}
+.text-large .footer-sources,.text-large .photo-credit{font-size:13px}
+.text-large .toast{font-size:15px}
+@media(max-width:850px){.text-large .stage-tab{flex-basis:170px}.text-large .stage-text strong{font-size:14px}.text-large .stage-text small{font-size:12px}}
+@media(max-width:600px){.text-large .panel-heading h3{font-size:27px}.text-large .item-title{font-size:17px}.text-large .item-detail{font-size:15px}.text-large .rite p{min-height:0}.text-large .hero-description{font-size:16px}}
+
+/* ===== Tungi rejim ===== */
+[data-theme=dark]{--paper:#0f1713;--surface:#16211c;--ink:#e3ebe5;--green:#8fcdb0;--green-hover:#a9dcc4;--sage:#1c2a23;--muted:#9aa69e;--line:#26332c;--gold:#d2a768;color-scheme:dark}
+[data-theme=dark] ::selection{background:#2e5a47;color:#fff}
+[data-theme=dark] .brand-icon,[data-theme=dark] .header-pdf,[data-theme=dark] .tool-button{border-color:#33433a}
+[data-theme=dark] .tool-button[aria-pressed=true]{background:#2e7457;border-color:#2e7457;color:#fff}
+[data-theme=dark] .hero-description{color:var(--muted)}
+[data-theme=dark] .button-primary,[data-theme=dark] .custom-add,[data-theme=dark] .skip-link,[data-theme=dark] .toast{background:#2e7457;color:#fff}
+[data-theme=dark] .button-primary:hover,[data-theme=dark] .custom-add:hover{background:#358564}
+[data-theme=dark] .hero-meta>span+span:before{background:#4b5a51}
+[data-theme=dark] .hero-image{background:#1c2621}
+[data-theme=dark] .hero-image img{filter:saturate(.7) brightness(.78)}
+[data-theme=dark] .image-note{background:var(--surface);border-color:var(--line);box-shadow:none}
+[data-theme=dark] .checklist-section{background:#121c17;border-color:var(--line)}
+[data-theme=dark] .overall-card{background:#1d3a2f}
+[data-theme=dark] .stage-tab:hover{background:#1a2620}
+[data-theme=dark] .stage-tab[aria-selected=true]{background:var(--surface);border-color:var(--line);box-shadow:none}
+[data-theme=dark] .stage-num{border-color:#3a4a41}
+[data-theme=dark] .stage-tab[aria-selected=true] .stage-num{background:#2e7457;border-color:#2e7457;color:#fff}
+[data-theme=dark] .stage-tab.is-complete .stage-num{background:#23402f;border-color:#23402f;color:#a9dcc2}
+[data-theme=dark] .save-note svg{color:#8fa596}
+[data-theme=dark] .save-note.storage-error{color:#e0a27a}
+[data-theme=dark] .checklist-panel,[data-theme=dark] .trip-card,[data-theme=dark] .tawaf-counter{background:var(--surface);border-color:var(--line);box-shadow:none}
+[data-theme=dark] .panel-heading,[data-theme=dark] .check-item,[data-theme=dark] .custom-form,[data-theme=dark] .trip-result{border-color:var(--line)}
+[data-theme=dark] .stage-count{background:#1f2b25;color:#a9c4b0}
+[data-theme=dark] .item-title{color:var(--ink)}
+[data-theme=dark] .item-detail,[data-theme=dark] .check-item.is-checked .item-detail{color:#9aa79e}
+[data-theme=dark] .check-item.is-checked .item-title{color:#8d998f;text-decoration-color:#56645b}
+[data-theme=dark] .check-item input{accent-color:#4fae86}
+[data-theme=dark] .panel-bottom{background:#131d18;border-color:var(--line)}
+[data-theme=dark] .button-back,[data-theme=dark] .tawaf-actions button{border-color:#33433a}
+[data-theme=dark] .button-next,[data-theme=dark] .trip-go{background:#1f3329;color:var(--green)}
+[data-theme=dark] .button-next:hover,[data-theme=dark] .trip-go:hover{background:#274034}
+[data-theme=dark] .checklist-footnote{color:#8d998f}
+[data-theme=dark] .footnote-mark{border-color:#56645b}
+[data-theme=dark] .rite-key{background:#1f2b25}
+[data-theme=dark] .download-section{background:#18231e}
+[data-theme=dark] .download-icon{border-color:#33433a}
+[data-theme=dark] #source-links a{color:#9fb3a5}
+[data-theme=dark] .photo-credit{color:#86918a}
+[data-theme=dark] .photo-credit a{text-decoration-color:#3f4c44}
+[data-theme=dark] .trip-fields input,[data-theme=dark] .custom-form input{background:#101914;border-color:#3f5046}
+[data-theme=dark] .custom-form input::placeholder{color:#738078}
+[data-theme=dark] .trip-fields input:focus,[data-theme=dark] .custom-form input:focus{border-color:var(--green);box-shadow:0 0 0 3px #8fcdb026}
+[data-theme=dark] .trip-error,[data-theme=dark] .custom-error{color:#f0a487}
+[data-theme=dark] .stage-now,[data-theme=dark] .item-tag{background:#3a2e1c;color:#e7c48f}
+[data-theme=dark] .item-delete:hover{background:#3a221b;color:#f0a487}
+[data-theme=dark] .tawaf-seg{stroke:#24312a}
+[data-theme=dark] .tawaf-kaaba rect{fill:#050706;stroke:#3a4a41;stroke-width:1}
+[data-theme=dark] .tawaf-kaaba .tawaf-kiswa,[data-theme=dark] .tawaf-kaaba .tawaf-door{fill:#c49a52;stroke:none}
+[data-theme=dark] .toast-action{background:#ffffff2e}
+@keyframes item-in-dark{from{opacity:0;transform:translateY(-6px);background:#3a2e1c}to{opacity:1;transform:none;background:transparent}}
+[data-theme=dark] .check-item.is-new{animation-name:item-in-dark}
+[data-theme=dark] .tawaf-seg.is-done{stroke:var(--green)}
+[data-theme=dark] .tawaf-section.is-complete .tawaf-seg.is-done{stroke:var(--gold)}
+[data-theme=dark] .trip-fields input[aria-invalid],[data-theme=dark] .custom-form input[aria-invalid]{border-color:#e07a5a;border-style:solid}
+/* Rasm osti yozuvi "Niyatdan manzilgacha" kartochkasi bilan ustma-ust tushmasin */
+.image-note{z-index:2}
+.hero-image figcaption{left:auto;right:28px}
+@media(max-width:850px){.hero-image figcaption{right:auto;left:22px;bottom:64px}}
+@media(max-width:600px){.text-large .hero-meta{font-size:12px;gap:22px}}
