@@ -1,0 +1,83 @@
+export const stages = [
+  {
+    id: 'docs',
+    number: '01',
+    title: 'Hujjatlar va bandlovlar',
+    shortTitle: 'Hujjatlar',
+    eyebrow: 'Safar tasdiqlanguncha',
+    description: 'Hujjatlar, chiptalar va bandlovlarni bir joyga jamlang.',
+    items: [
+      { id: 'passport', title: 'Pasportimni tekshirdim', detail: 'Amal muddatini safarim uchun kirish talablariga solishtirdim.' },
+      { id: 'visa', title: 'Viza va kirish shartlarini tasdiqladim', detail: 'Ism-familiya, pasport raqami va ruxsat etilgan muddatlar mos.' },
+      { id: 'tickets', title: 'Borish va qaytish chiptalari tayyor', detail: 'Sanalar, aeroportlar va bagaj me’yorini tekshirdim.' },
+      { id: 'bookings', title: 'Mehmonxona va transferlar tasdiqlangan', detail: 'Tashkilotchi, shartnoma va xizmatlar ro‘yxatini tekshirdim.' },
+      { id: 'copies', title: 'Sug‘urta va hujjat nusxalarini saqladim', detail: 'Telefonda internetsiz ochiladigan va qog‘oz nusxalar bor.' },
+      { id: 'nusuk', title: 'Nusukdagi ruxsat va bandlovlarni tekshirdim', detail: 'Safarimga tegishli amaldagi talablar bo‘yicha.' },
+    ],
+  },
+  {
+    id: 'prep',
+    number: '02',
+    title: 'Safarga tayyorgarlik',
+    shortTitle: 'Tayyorgarlik',
+    eyebrow: 'Yo‘lga chiqishdan oldin',
+    description: 'Amallarni o‘rganing, zarur buyumlar va aloqalarni tayyorlang.',
+    items: [
+      { id: 'learn', title: 'Umra tartibi va ehrom qoidalarini o‘rgandim', detail: 'Niyat, talbiya, tavof, sa’y va ehromdan chiqish.' },
+      { id: 'health', title: 'Emlash va tibbiy hujjat talablarini tekshirdim', detail: 'Amaldagi talablarga mos hujjatlar va shaxsiy dorilar tayyor.' },
+      { id: 'clothes', title: 'Ehrom yoki mos libos va oyoq kiyim tayyor', detail: 'Yengil kiyimlar va yurishga qulay oyoq kiyim.' },
+      { id: 'hygiene', title: 'Zarur shaxsiy buyumlarni yig‘dim', detail: 'Hidsiz gigiyena vositalari, kichik sumka va suv idishi.' },
+      { id: 'phone', title: 'Telefon va aloqa rejam tayyor', detail: 'Quvvatlagich, mos adapter, SIM/eSIM yoki rouming.' },
+      { id: 'contacts', title: 'Kerakli kontakt va manzillarni saqladim', detail: 'Guruh rahbari, yaqinlar, mehmonxona va uchrashuv joyi.' },
+    ],
+  },
+  {
+    id: 'route',
+    number: '03',
+    title: 'Yo‘l va ehromga kirish',
+    shortTitle: 'Yo‘l va ehrom',
+    eyebrow: 'Makkaga yo‘l olayotganda',
+    description: 'Yo‘nalishdagi miqotni aniqlang va undan o‘tmay ehromga kiring.',
+    items: [
+      { id: 'handbag', title: 'Hujjatlar va zarur dorilar qo‘l yukimda', detail: 'Uchish va aeroportga borish vaqti tasdiqlangan.' },
+      { id: 'miqat', title: 'Yo‘nalishimdagi miqotni aniqladim', detail: 'Avval Madinaga borsam, Makkaga yo‘lga chiqishimni hisobga oldim.' },
+      { id: 'ihram-clothes', title: 'Ehromga kirish uchun kiyindim', detail: 'Erkaklar: ikki bo‘lak ehrom; ayollar: shariatga mos odatiy libos.' },
+      { id: 'ihram', title: 'Miqotdan o‘tmay niyat qilib, talbiya aytdim', detail: 'Umraga to‘g‘ridan-to‘g‘ri uchsam, ehromga kirishni Jiddaga qo‘nishgacha kechiktirmadim.' },
+    ],
+  },
+  {
+    id: 'rites',
+    number: '04',
+    title: 'Makkada Umra amallari',
+    shortTitle: 'Umra amallari',
+    eyebrow: 'Masjidul Haromda',
+    description: 'Tavof, sa’y va soch olish amallarini tartib bilan bajaring.',
+    items: [
+      { id: 'wudu', title: 'Tahorat qilib, tavofga tayyorlandim', detail: '' },
+      { id: 'tawaf', title: 'Ka’ba atrofida 7 marta tavof qildim', detail: 'Ka’ba chapda. Boshlanish va har aylanish yakuni Hajarul Asvad ro‘parasida.' },
+      { id: 'prayer', title: 'Ikki rakat tavof namozini o‘qidim', detail: 'Tavofdan keyin, boshqalarning yo‘lini to‘smasdan.' },
+      { id: 'sai', title: 'Safo va Marva orasida 7 qatnov sa’y qildim', detail: 'Safo → Marva = 1, qaytish = 2. Safodan boshlanib, Marvada tugaydi.' },
+      { id: 'hair', title: 'Sa’ydan keyin sochimni oldirdim yoki qisqartirdim', detail: 'Erkaklar butun boshdan, ayollar soch uchidan qisqartiradi. Shundan keyin ehromdan chiqiladi.' },
+    ],
+  },
+  {
+    id: 'return',
+    number: '05',
+    title: 'Uyga qaytish',
+    shortTitle: 'Qaytish',
+    eyebrow: 'Qaytish safari oldidan',
+    description: 'Reys, qolish muddati va buyumlaringizni yana bir bor tekshiring.',
+    items: [
+      { id: 'return-flight', title: 'Qaytish reysi va transferni tekshirdim', detail: 'Aeroport, uchish vaqti va mehmonxonadan chiqish vaqti.' },
+      { id: 'stay', title: 'Ruxsat etilgan qolish muddatiga mos qaytyapman', detail: '' },
+      { id: 'baggage', title: 'Bagaj va Zamzam tashish qoidalarini tekshirdim', detail: 'Aviakompaniyamning amaldagi me’yorlari bo‘yicha.' },
+      { id: 'final-check', title: 'Hujjat, telefon va buyumlarimni qayta tekshirdim', detail: 'Mehmonxona, seyf, zaryad joylari va qo‘l yuki.' },
+    ],
+  },
+];
+
+export const sources = [
+  { title: 'Nusuk: Umra tartibi', url: 'https://umrah.nusuk.sa/Journey' },
+  { title: 'Haramayn: Umra qo‘llanmasi', url: 'https://risala.prh.gov.sa/storage/contents/940/en_sifat_alomrah_harmain.pdf' },
+  { title: 'Saudiya SSV: ziyoratchilar salomatligi', url: 'https://www.moh.gov.sa/en/healthawareness/pilgrims-health/pages/default.aspx' },
+];
