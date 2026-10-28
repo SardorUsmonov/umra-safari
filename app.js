@@ -1,9 +1,9 @@
-import { stages, sources } from './checklist-data.js';
+import { stages, sources } from './checklist-data.js?v=5';
 import {
   STORAGE_KEY, PREFS_KEY, TAWAF_ROUNDS, MAX_CUSTOM_PER_STAGE,
   emptyState, parseState, serializeState, parsePrefs,
   normalizeTitle, createCustomItem, tripPlan, todayISO, clampTawaf,
-} from './logic.js';
+} from './logic.js?v=5';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -83,7 +83,7 @@ function renderItem(item) {
   if (!item.custom) {
     return `<label class="check-item${isChecked ? ' is-checked' : ''}" for="item-${item.id}">${input}<span class="item-copy"><span class="item-title">${escapeHTML(item.title)}</span>${item.detail ? `<span class="item-detail">${escapeHTML(item.detail)}</span>` : ''}</span></label>`;
   }
-  return `<div class="check-item is-custom${isChecked ? ' is-checked' : ''}">${input}<label class="item-copy" for="item-${item.id}"><span class="item-title">${escapeHTML(item.title)}</span><span class="item-tag">Sizning bandingiz</span></label><button type="button" class="item-delete" data-delete="${item.id}" aria-label="${escapeHTML(`«${item.title}» bandini o‘chirish`)}" title="O‘chirish">${trashIcon}</button></div>`;
+  return `<div class="check-item is-custom${isChecked ? ' is-checked' : ''}">${input}<label class="item-copy" for="item-${item.id}"><span class="item-title">${escapeHTML(item.title)}</span><span class="item-tag">Siz qo‘shgan band</span></label><button type="button" class="item-delete" data-delete="${item.id}" aria-label="${escapeHTML(`«${item.title}» bandini o‘chirish`)}" title="O‘chirish">${trashIcon}</button></div>`;
 }
 
 function renderItems() {
@@ -100,8 +100,8 @@ function updateProgress(shouldAnnounce = false) {
   $('overall-progress').setAttribute('aria-valuemax', String(items.length));
   $('overall-progress').setAttribute('aria-valuenow', String(total));
   $('overall-message').textContent = total === items.length
-    ? 'Barcha bandlar belgilandi. Safaringiz xayrli bo‘lsin!'
-    : total === 0 ? 'Har bir belgi — tayyorgarlikka bir qadam.' : `${items.length - total} band qoldi. Bir qadamdan davom eting.`;
+    ? 'Hammasi belgilandi. Safaringiz xayrli bo‘lsin!'
+    : total === 0 ? 'Hali hech narsa belgilanmagan.' : `${items.length - total} band qoldi.`;
   stages.forEach(stage => {
     const count = itemsOf(stage).length;
     const done = doneIn(stage);
@@ -134,7 +134,7 @@ function selectStage(index, { save = true, focus = false, reveal = false } = {})
     button.tabIndex = i === index ? 0 : -1;
   });
   $('checklist-panel').setAttribute('aria-labelledby', `stage-tab-${stage.id}`);
-  $('panel-eyebrow').textContent = `${stage.number} / ${stage.eyebrow.toLocaleUpperCase('uz')}`;
+  $('panel-eyebrow').textContent = `${Number(stage.number)}-bosqich · ${stage.eyebrow}`;
   $('panel-title').textContent = stage.title;
   $('panel-description').textContent = stage.description;
   renderItems();
