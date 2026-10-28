@@ -72,7 +72,7 @@ function showToast(text, action) {
 
 $('stage-nav').innerHTML = stages.map(stage => `
   <button type="button" class="stage-tab" role="tab" id="stage-tab-${stage.id}" data-stage="${stage.id}" aria-controls="checklist-panel" aria-selected="false" tabindex="-1">
-    <span class="stage-num">${stage.number}</span><span class="stage-text"><strong>${escapeHTML(stage.shortTitle)}<span class="stage-now" hidden>Hozir</span></strong><small data-nav-count="${stage.id}">0 / ${stage.items.length} band</small></span><span class="stage-arrow" aria-hidden="true">↗</span>
+    <span class="stage-num">${stage.number}</span><span class="stage-text"><strong>${escapeHTML(stage.shortTitle)}<span class="stage-now" hidden>Hozir</span></strong><small data-nav-count="${stage.id}">0 / ${stage.items.length} band</small></span>
   </button>`).join('');
 
 const trashIcon = '<svg class="icon small" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -392,7 +392,8 @@ $('tawaf-plus').addEventListener('click', () => {
   lastTap = now;
   const next = state.tawaf.count + 1;
   setTawaf(next, { pop: true });
-  navigator.vibrate?.(next === TAWAF_ROUNDS ? [60, 80, 60] : 35);
+  // Tebranish faqat haqiqiy teginishdan keyin ruxsat etiladi; aks holda brauzer ogohlantirish yozadi.
+  if (navigator.userActivation?.hasBeenActive !== false) navigator.vibrate?.(next === TAWAF_ROUNDS ? [60, 80, 60] : 35);
   if (next === TAWAF_ROUNDS) announce('Tavof yakunlandi. Yetti aylanish.');
 });
 $('tawaf-undo').addEventListener('click', () => {
