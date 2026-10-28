@@ -4,6 +4,17 @@ UMRA SAFARI - VEB SAHIFA KODI
 HTML, CSS, JavaScript, surat va tayyor A4 PDF arxiv ichida.
 Belgilar tashrifchining brauzerida avtomatik saqlanadi.
 
+ONLAYN MANZILLAR
+Asosiy (GitHub Pages):  https://sardorusmonov.github.io/umra-safari/
+Zaxira (Claude):        https://claude.ai/artifact/7hPxhdHRMFv2GBrouJQvrc
+Kod (GitHub):           https://github.com/SardorUsmonov/umra-safari
+
+Yangilash: fayllarni o'zgartirib, umra-safari papkasida
+   git add -A
+   git commit -m "o'zgarish tavsifi"
+   git push
+GitHub Pages 1-2 daqiqada yangilanadi.
+
 ISHGA TUSHIRISH
 1. ZIP arxivni oching.
 2. Terminalda umra-safari papkasiga kiring.
