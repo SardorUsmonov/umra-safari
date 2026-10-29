@@ -1,9 +1,10 @@
-import { stages, sources } from './checklist-data.js?v=5';
+import { stages, sources } from './checklist-data.js?v=6';
 import {
   STORAGE_KEY, PREFS_KEY, TAWAF_ROUNDS, MAX_CUSTOM_PER_STAGE,
   emptyState, parseState, serializeState, parsePrefs,
   normalizeTitle, createCustomItem, tripPlan, todayISO, clampTawaf,
-} from './logic.js?v=5';
+  routeFromHash, nextTasks,
+} from './logic.js?v=6';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -21,6 +22,7 @@ let activeIndex = Math.max(0, stages.findIndex(stage => stage.id === state.activ
 const itemsOf = stage => [...stage.items, ...(state.custom[stage.id] || [])];
 const allItems = () => stages.flatMap(itemsOf);
 const doneIn = stage => itemsOf(stage).filter(item => state.checked.has(item.id)).length;
+const findItem = id => allItems().find(item => item.id === id);
 
 function updateStorageNote() {
   const note = $('save-note');
@@ -68,6 +70,50 @@ function showToast(text, action) {
   showToast.timer = setTimeout(() => toast.classList.remove('is-visible'), action ? 9000 : 6000);
 }
 
+// ---------------------------------------------------------------- bo'limlar (Bugun, Cheklist, Tavof, Amallar)
+
+const BASE_TITLE = document.title;
+const VIEW_TITLES = { checklist: 'Cheklist', tawaf: 'Tavof hisoblagichi', guide: 'Umra amallari' };
+let currentView = routeFromHash(location.hash);
+
+function showView(view, { focus = false } = {}) {
+  currentView = view;
+  root.dataset.view = view;
+  document.querySelectorAll('[data-nav]').forEach(link => {
+    if (link.dataset.nav === view) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  });
+  document.title = view === 'today' ? BASE_TITLE : `${VIEW_TITLES[view]} — Umra safari`;
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  if (focus) $(`${view}-title`)?.focus({ preventScroll: true });
+  if (view === 'checklist') revealActiveTab(stages[activeIndex]);
+}
+
+/** Bo'limga o'tadi. Manzil o'zgargani uchun telefondagi "orqaga" tugmasi ham ishlaydi. */
+function go(view) {
+  if (location.hash && routeFromHash(location.hash) === view) showView(view, { focus: true });
+  else location.hash = view;
+}
+
+window.addEventListener('hashchange', () => showView(routeFromHash(location.hash), { focus: true }));
+// Ochiq bo'lim tugmasi qayta bosilsa hashchange bo'lmaydi; bo'lim boshiga qaytaramiz.
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[href^="#"]');
+  if (!link || link.classList.contains('skip-link')) return;
+  if (link.getAttribute('href') === location.hash) {
+    event.preventDefault();
+    showView(currentView, { focus: true });
+  }
+});
+document.querySelector('.skip-link').addEventListener('click', event => {
+  event.preventDefault();
+  $('main').focus();
+});
+
+const header = document.querySelector('.app-header');
+const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 4);
+window.addEventListener('scroll', onScroll, { passive: true });
+
 // ---------------------------------------------------------------- cheklist
 
 $('stage-nav').innerHTML = stages.map(stage => `
@@ -75,13 +121,14 @@ $('stage-nav').innerHTML = stages.map(stage => `
     <span class="stage-num">${stage.number}</span><span class="stage-text"><strong>${escapeHTML(stage.shortTitle)}<span class="stage-now" hidden>Hozir</span></strong><small data-nav-count="${stage.id}">0 / ${stage.items.length} band</small></span>
   </button>`).join('');
 
-const trashIcon = '<svg class="icon small" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const trashIcon = '<svg class="icon small" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const itemCopy = item => `<span class="item-title">${escapeHTML(item.title)}</span>${item.detail ? `<span class="item-detail">${escapeHTML(item.detail)}</span>` : ''}`;
 
 function renderItem(item) {
   const isChecked = state.checked.has(item.id);
-  const input = `<input id="item-${item.id}" type="checkbox" data-item="${item.id}"${isChecked ? ' checked' : ''}>`;
+  const input = `<input class="check-box" id="item-${item.id}" type="checkbox" data-item="${item.id}"${isChecked ? ' checked' : ''}>`;
   if (!item.custom) {
-    return `<label class="check-item${isChecked ? ' is-checked' : ''}" for="item-${item.id}">${input}<span class="item-copy"><span class="item-title">${escapeHTML(item.title)}</span>${item.detail ? `<span class="item-detail">${escapeHTML(item.detail)}</span>` : ''}</span></label>`;
+    return `<label class="check-item${isChecked ? ' is-checked' : ''}" for="item-${item.id}">${input}<span class="item-copy">${itemCopy(item)}</span></label>`;
   }
   return `<div class="check-item is-custom${isChecked ? ' is-checked' : ''}">${input}<label class="item-copy" for="item-${item.id}"><span class="item-title">${escapeHTML(item.title)}</span><span class="item-tag">Siz qo‘shgan band</span></label><button type="button" class="item-delete" data-delete="${item.id}" aria-label="${escapeHTML(`«${item.title}» bandini o‘chirish`)}" title="O‘chirish">${trashIcon}</button></div>`;
 }
@@ -90,7 +137,7 @@ function renderItems() {
   $('item-list').innerHTML = itemsOf(stages[activeIndex]).map(renderItem).join('');
 }
 
-function updateProgress(shouldAnnounce = false) {
+function updateProgress(shouldAnnounce = false, { keepNext = false } = {}) {
   const items = allItems();
   const total = items.filter(item => state.checked.has(item.id)).length;
   const percent = items.length ? Math.round(total / items.length * 100) : 0;
@@ -114,6 +161,7 @@ function updateProgress(shouldAnnounce = false) {
   const count = itemsOf(stage).length;
   const done = doneIn(stage);
   $('stage-count').textContent = `${done} / ${count}`;
+  $('stage-fill').style.width = `${count ? Math.round(done / count * 100) : 0}%`;
   $('stage-status').textContent = done === count ? 'Bu bosqichdagi barcha bandlar belgilandi.' : `${count - done} band qoldi`;
   $('item-list').querySelectorAll('input[data-item]').forEach(input => {
     input.checked = state.checked.has(input.dataset.item);
@@ -121,6 +169,8 @@ function updateProgress(shouldAnnounce = false) {
   });
   if (shouldAnnounce) announce(`Jami ${items.length} banddan ${total} tasi belgilandi. ${stage.title}: ${done} / ${count}.`);
   renderTrip();
+  renderSummary();
+  if (!keepNext) renderNext();
   renderTawaf();
 }
 
@@ -148,7 +198,14 @@ function selectStage(index, { save = true, focus = false, reveal = false } = {})
   if (reveal) revealPanel();
 }
 
-// Telefonda bosqich tugmalari gorizontal qatorda; faol tugmani ko'rinadigan joyga suramiz.
+/** Bosqichni tanlab, Cheklist bo'limini ochadi. */
+function openStage(stageId) {
+  const index = stages.findIndex(stage => stage.id === stageId);
+  if (index >= 0) selectStage(index);
+  go('checklist');
+}
+
+// Bosqich tugmalari gorizontal qatorda; faol tugmani ko'rinadigan joyga suramiz.
 function revealActiveTab(stage) {
   const nav = $('stage-nav');
   if (nav.scrollWidth <= nav.clientWidth + 1) return;
@@ -158,10 +215,10 @@ function revealActiveTab(stage) {
   nav.scrollTo({ left, behavior: scrollBehavior() });
 }
 
-// "Keyingi bosqich"dan keyin telefonda yangi bosqich sarlavhasi ekrandan yuqorida qoladi; uni qaytaramiz.
+// "Keyingi bosqich"dan keyin yangi bosqich sarlavhasi ekrandan yuqorida qolsa, uni qaytaramiz.
 function revealPanel() {
   const top = $('checklist-panel').getBoundingClientRect().top;
-  if (top < 0 || top > window.innerHeight * 0.6) $('checklist-panel').scrollIntoView({ block: 'start', behavior: scrollBehavior() });
+  if (top < 60 || top > window.innerHeight * 0.6) $('checklist-panel').scrollIntoView({ block: 'start', behavior: scrollBehavior() });
 }
 
 $('stage-nav').addEventListener('click', event => {
@@ -189,6 +246,68 @@ $('item-list').addEventListener('change', event => {
 });
 $('previous-stage').addEventListener('click', () => selectStage(activeIndex - 1, { reveal: true }));
 $('next-stage').addEventListener('click', () => selectStage(activeIndex + 1, { reveal: true }));
+
+// ---------------------------------------------------------------- bosh sahifa: bosqichlar va navbatdagi vazifalar
+
+function renderSummary() {
+  $('stage-summary').innerHTML = stages.map(stage => {
+    const count = itemsOf(stage).length;
+    const done = doneIn(stage);
+    const complete = done === count;
+    return `<li><button type="button" class="summary-row${complete ? ' is-complete' : ''}" data-summary="${stage.id}" aria-label="${escapeHTML(`${stage.title}: ${done} / ${count}. Bosqichni ochish`)}"><strong>${Number(stage.number)}. ${escapeHTML(stage.shortTitle)}</strong><span>${complete ? 'Tayyor ✓' : `${done} / ${count}`}</span><span class="summary-bar" aria-hidden="true"><i style="width:${count ? Math.round(done / count * 100) : 0}%"></i></span></button></li>`;
+  }).join('');
+}
+$('stage-summary').addEventListener('click', event => {
+  const row = event.target.closest('[data-summary]');
+  if (row) openStage(row.dataset.summary);
+});
+
+let nextTimer = 0;
+function renderNext() {
+  clearTimeout(nextTimer);
+  const next = nextTasks(stages, itemsOf, state.checked, lastTripStage?.id ?? null, 3);
+  const link = $('next-all');
+  if (!next) {
+    $('next-stage-name').textContent = '';
+    $('next-list').innerHTML = '<p class="next-done">Barcha bandlar belgilangan. Safaringiz xayrli, ibodatlaringiz qabul bo‘lsin.</p>';
+    link.dataset.stage = '';
+    return;
+  }
+  $('next-stage-name').textContent = `${Number(next.stage.number)}-bosqich · ${next.stage.shortTitle} · ${next.remaining} band qoldi`;
+  $('next-list').innerHTML = next.items.map(item => `<label class="next-item" for="next-${item.id}"><input class="check-box" id="next-${item.id}" type="checkbox" data-next="${item.id}"><span class="item-copy">${itemCopy(item)}</span></label>`).join('');
+  link.dataset.stage = next.stage.id;
+}
+
+$('next-list').addEventListener('change', event => {
+  const input = event.target;
+  if (!input.matches('input[data-next]')) return;
+  const id = input.dataset.next;
+  const item = findItem(id);
+  if (input.checked) state.checked.add(id);
+  else state.checked.delete(id);
+  input.closest('.next-item').classList.toggle('is-checked', input.checked);
+  persist();
+  // Belgilangan band bir lahza chizilgan holda turadi, so'ng ro'yxat keyingi band bilan yangilanadi.
+  updateProgress(true, { keepNext: true });
+  clearTimeout(nextTimer);
+  nextTimer = setTimeout(renderNext, 700);
+  if (input.checked && item) {
+    showToast(`«${item.title}» belgilandi.`, {
+      label: 'Qaytarish',
+      onClick: () => {
+        state.checked.delete(id);
+        persist();
+        updateProgress(true);
+      },
+    });
+  }
+});
+$('next-all').addEventListener('click', event => {
+  const stageId = event.currentTarget.dataset.stage;
+  if (!stageId) return;
+  event.preventDefault();
+  openStage(stageId);
+});
 
 // ---------------------------------------------------------------- o'z bandlari
 
@@ -260,6 +379,7 @@ $('item-list').addEventListener('click', event => {
 // ---------------------------------------------------------------- safar rejasi
 
 let lastTripStage = null;
+let tripEditing = false;
 
 function renderTrip() {
   const departInput = $('trip-depart');
@@ -269,18 +389,24 @@ function renderTrip() {
   returnInput.min = state.trip.depart || '';
 
   const result = tripPlan(state.trip, todayISO());
+  const hasResult = result.status === 'ok' || result.status === 'done';
   $('trip-error').hidden = result.status !== 'error';
   $('trip-error').textContent = result.error || '';
   returnInput.toggleAttribute('aria-invalid', result.status === 'error');
   $('trip-empty').hidden = result.status !== 'empty';
-  $('trip-result').hidden = result.status !== 'ok' && result.status !== 'done';
+  $('trip-result').hidden = !hasResult;
+  // Sana kiritilgach maydonlar yig'iladi; "Sanani o'zgartirish" ularni qayta ochadi.
+  const fieldsHidden = hasResult && !tripEditing;
+  $('trip-fields').hidden = fieldsHidden;
+  $('trip-edit').setAttribute('aria-expanded', String(!fieldsHidden));
+  $('trip-edit').textContent = fieldsHidden ? 'Sanani o‘zgartirish' : 'Tayyor';
 
   const recommended = result.stageId ? stages.find(stage => stage.id === result.stageId) : null;
   stages.forEach(stage => {
     $(`stage-tab-${stage.id}`).querySelector('.stage-now').hidden = stage !== recommended;
   });
   lastTripStage = recommended;
-  if ($('trip-result').hidden) return;
+  if (!hasResult) return;
 
   $('trip-headline').textContent = result.headline;
   $('trip-sub').textContent = result.sub;
@@ -290,20 +416,26 @@ function renderTrip() {
     tip += left ? ` «${recommended.shortTitle}» bosqichida ${left} band qoldi.` : ` «${recommended.shortTitle}» bosqichi bajarilgan.`;
   }
   $('trip-tip').textContent = tip;
-  const go = $('trip-go');
-  go.hidden = !recommended || stages[activeIndex] === recommended;
-  if (recommended) go.textContent = `${recommended.number} · ${recommended.shortTitle} bosqichiga o‘tish →`;
+  const goButton = $('trip-go');
+  goButton.hidden = !recommended;
+  if (recommended) goButton.textContent = `«${recommended.shortTitle}» bosqichini ochish`;
 }
 
 function onTripChange() {
   state.trip = { depart: $('trip-depart').value, ret: $('trip-return').value };
+  tripEditing = true;
   persist();
-  renderTrip();
+  updateProgress();
 }
 $('trip-depart').addEventListener('change', onTripChange);
 $('trip-return').addEventListener('change', onTripChange);
+$('trip-edit').addEventListener('click', () => {
+  tripEditing = $('trip-fields').hidden;
+  renderTrip();
+  if (tripEditing) $('trip-depart').focus();
+});
 $('trip-go').addEventListener('click', () => {
-  if (lastTripStage) selectStage(stages.indexOf(lastTripStage), { reveal: true });
+  if (lastTripStage) openStage(lastTripStage.id);
 });
 
 // ---------------------------------------------------------------- tavof hisoblagichi
@@ -353,10 +485,11 @@ function renderTawaf({ pop = false } = {}) {
   $('tawaf-ring-title').textContent = `Tavof halqasi: ${count} / ${TAWAF_ROUNDS} aylanish`;
   $('tawaf-segments').querySelectorAll('.tawaf-seg').forEach(seg => seg.classList.toggle('is-done', Number(seg.dataset.round) <= count));
   $('tawaf-walker').style.transform = `rotate(${-count * STEP}deg)`;
-  $('tawaf').classList.toggle('is-complete', complete);
+  $('view-tawaf').classList.toggle('is-complete', complete);
   $('tawaf-status').textContent = complete
     ? 'Tavof yakunlandi. Endi ikki rakat tavof namozini o‘qing.'
     : count === 0 ? 'Hajarul Asvad ro‘parasidan boshlang.' : `${count}-aylanish yakunlandi. Yana ${TAWAF_ROUNDS - count} ta qoldi.`;
+  $('quick-tawaf').textContent = complete ? `Yakunlangan: ${TAWAF_ROUNDS} / ${TAWAF_ROUNDS}` : count ? `Davom etmoqda: ${count} / ${TAWAF_ROUNDS}` : 'Hali boshlanmagan';
   const plus = $('tawaf-plus');
   plus.disabled = complete;
   plus.textContent = complete ? 'Tavof yakunlandi' : `${count + 1}-aylanishni yakunladim`;
@@ -427,7 +560,7 @@ function applyPrefs() {
   $('toggle-theme').setAttribute('aria-pressed', String(dark));
   $('toggle-theme').title = dark ? 'Kunduzgi rejim' : 'Tungi rejim';
   $('toggle-text').setAttribute('aria-pressed', String(prefs.textLarge));
-  $('theme-color').content = dark ? '#0f1713' : '#194c3c';
+  $('theme-color').content = dark ? '#0c1310' : '#eef1ef';
 }
 function savePrefs() {
   try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* sozlama faqat shu sahifada qoladi */ }
@@ -467,12 +600,14 @@ function renderPrintSheet() {
   $('print-sheet').innerHTML = `<h1>Umra safari</h1><p class="print-intro">Bir sahifalik cheklist / ${stages.length} bosqich / ${count} band</p><div class="print-columns">${stages.map(stage => `<section class="print-section"><h2>${stage.number} / ${escapeHTML(stage.title)}</h2>${itemsOf(stage).map(item => `<div class="print-item"><span class="print-box"></span><strong>${escapeHTML(item.title)}</strong>${item.detail ? `<small>${escapeHTML(item.detail)}</small>` : ''}</div>`).join('')}</section>`).join('')}</div><p class="print-footer">Viza, ruxsat va tibbiy talablarni safar oldidan qayta tekshiring. Manbalar: Nusuk, Haramayn, Saudiya SSV.</p>`;
 }
 
-$('source-links').innerHTML = sources.map(source => `<a href="${escapeHTML(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(source.title)} ↗</a>`).join('');
+$('source-links').innerHTML = sources.map(source => `<a href="${escapeHTML(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(source.title)}</a>`).join('');
 
 applyPrefs();
 renderPrintSheet();
 selectStage(activeIndex, { save: false });
 updateStorageNote();
+showView(currentView);
+onScroll();
 if (tawafInProgress()) setWakeLock(true);
 
 // ---------------------------------------------------------------- Claude artefaktida PDF

@@ -135,3 +135,37 @@ test('tripPlan tavsiya qilgan har bir bosqich haqiqatan mavjud', () => {
     if (result.stageId !== null) assert.ok(ids.has(result.stageId), `${depart}: ${result.stageId}`);
   }
 });
+
+test('routeFromHash bo‘lim nomlari va o‘zbekcha taxalluslarni taniydi', async () => {
+  const { routeFromHash, VIEWS } = await import('../logic.js');
+  assert.equal(routeFromHash(''), 'today');
+  assert.equal(routeFromHash('#'), 'today');
+  assert.equal(routeFromHash('#checklist'), 'checklist');
+  assert.equal(routeFromHash('#Cheklist'), 'checklist');
+  assert.equal(routeFromHash('#tavof'), 'tawaf');
+  assert.equal(routeFromHash('#amallar'), 'guide');
+  assert.equal(routeFromHash('#journey'), 'today');
+  assert.equal(routeFromHash('#yoq-narsa'), 'today');
+  assert.equal(routeFromHash(undefined), 'today');
+  for (const view of VIEWS) assert.equal(routeFromHash(`#${view}`), view);
+});
+
+test('nextTasks tavsiya qilingan bosqichdan boshlab bajarilmagan bandlarni beradi', async () => {
+  const { nextTasks } = await import('../logic.js');
+  const itemsOf = stage => stage.items;
+  const first = nextTasks(stages, itemsOf, new Set(), null);
+  assert.equal(first.stage.id, 'docs');
+  assert.deepEqual(first.items.map(item => item.id), ['passport', 'visa', 'tickets']);
+  assert.equal(first.remaining, 6);
+
+  const prep = nextTasks(stages, itemsOf, new Set(['learn']), 'prep', 2);
+  assert.deepEqual(prep.items.map(item => item.id), ['health', 'clothes']);
+
+  // Tavsiya qilingan bosqich tugagan bo'lsa, keyingisiga o'tadi, oxiridan keyin boshiga qaytadi.
+  const returnDone = new Set(stages.find(stage => stage.id === 'return').items.map(item => item.id));
+  assert.equal(nextTasks(stages, itemsOf, returnDone, 'return').stage.id, 'docs');
+
+  const all = new Set(stages.flatMap(stage => stage.items.map(item => item.id)));
+  assert.equal(nextTasks(stages, itemsOf, all, 'docs'), null);
+  assert.equal(nextTasks([], itemsOf, new Set()), null);
+});

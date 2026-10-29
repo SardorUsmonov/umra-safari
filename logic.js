@@ -142,5 +142,37 @@ export function tripPlan(trip = {}, today = todayISO()) {
     if (toReturn === 0) return plan('return', 'Bugun', 'uyga qaytasiz', 'Qaytish reysi, transfer va qo‘l yukini yana bir bor tekshiring.');
     if (toReturn <= 2) return plan('return', `${toReturn} kun`, 'qaytishgacha qoldi', 'Qaytish reysi, qolish muddati va bagaj qoidalarini tekshiring.');
   }
-  return plan('rites', `${tripDay}-kun`, 'safar davom etmoqda', 'Umra amallarini tartib bilan bajaring. Tavof hisoblagichi sahifada pastroqda.');
+  return plan('rites', `${tripDay}-kun`, 'safar davom etmoqda', 'Umra amallarini tartib bilan bajaring. Aylanishlarni «Tavof» bo‘limida sanang.');
+}
+
+// ---------------------------------------------------------------- bo'limlar (ilova ko'rinishi)
+
+export const VIEWS = ['today', 'checklist', 'tawaf', 'guide'];
+const VIEW_ALIASES = {
+  '': 'today', today: 'today', bugun: 'today', journey: 'today',
+  checklist: 'checklist', cheklist: 'checklist',
+  tawaf: 'tawaf', tavof: 'tawaf',
+  guide: 'guide', amallar: 'guide',
+};
+
+/** Manzildagi #xeshdan ochiladigan bo'limni aniqlaydi. Noma'lum xesh bosh sahifaga olib boradi. */
+export function routeFromHash(hash) {
+  const key = String(hash ?? '').replace(/^#/, '').trim().toLowerCase();
+  return VIEW_ALIASES[key] ?? 'today';
+}
+
+/**
+ * Bosh sahifadagi "Navbatdagi vazifalar": tavsiya qilingan bosqichdan boshlab birinchi
+ * bajarilmagan bandlari bor bosqichni topadi va undagi dastlabki `limit` ta bandni qaytaradi.
+ * Hammasi belgilangan bo'lsa null.
+ */
+export function nextTasks(stages, itemsOf, checked, preferredStageId = null, limit = 3) {
+  if (!stages.length) return null;
+  const start = Math.max(0, stages.findIndex(stage => stage.id === preferredStageId));
+  for (let offset = 0; offset < stages.length; offset++) {
+    const stage = stages[(start + offset) % stages.length];
+    const open = itemsOf(stage).filter(item => !checked.has(item.id));
+    if (open.length) return { stage, items: open.slice(0, limit), remaining: open.length };
+  }
+  return null;
 }

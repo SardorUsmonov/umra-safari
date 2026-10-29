@@ -4,6 +4,17 @@ UMRA SAFARI - VEB SAHIFA KODI
 HTML, CSS, JavaScript, surat va tayyor A4 PDF arxiv ichida.
 Belgilar tashrifchining brauzerida avtomatik saqlanadi.
 
+KO'RINISH (ilova uslubi)
+Sayt telefon ilovasidek to'rt bo'limdan iborat:
+  Bugun    - safar sanasi kartochkasi, umumiy jarayon, navbatdagi
+             3 vazifa (shu yerning o'zida belgilanadi) va tezkor havolalar
+  Cheklist - 5 bosqich tugmalari va bandlar ro'yxati
+  Tavof    - aylanishlar hisoblagichi (katta tugma barmoq yetadigan joyda)
+  Amallar  - Umra amallari tartibi, PDF va rasmiy manbalar
+Telefon va planshetda menyu pastda, kompyuterda chap ustunda.
+Har bo'limning o'z manzili bor (#today, #checklist, #tawaf, #guide),
+shuning uchun telefondagi "orqaga" tugmasi ham ishlaydi.
+
 IMKONIYATLAR
 - Cheklist: 5 bosqich, 25 band, umumiy va bosqich bo'yicha jarayon.
 - O'z bandlari: har bir bosqichga o'z bandingizni qo'shish, o'chirish
@@ -50,7 +61,8 @@ FAYLLAR
 index.html          - sahifa tuzilishi
 styles.css          - telefon, kompyuter va chop etish uslublari
 app.js              - sahifadagi barcha interaktivlik
-logic.js            - holatni o'qish/saqlash, safar rejasi hisobi (sof mantiq)
+logic.js            - holatni o'qish/saqlash, safar rejasi, bo'limlar va
+                      navbatdagi vazifalar hisobi (sof mantiq)
 checklist-data.js   - barcha 25 band va rasmiy manbalar
 tests/              - logic.js uchun avtomatik testlar
 assets/             - surat, favicon va chop etiladigan PDF
@@ -58,7 +70,7 @@ assets/             - surat, favicon va chop etiladigan PDF
 HOSTING
 Statik hostingga shu papka tarkibini joylashtiring.
 Bosh sahifa: index.html. Server tomoni yoki ma'lumotlar bazasi kerak emas.
-Google Fonts internet orqali yuklanadi; internet bo'lmasa zaxira
+Shrift (Atkinson Hyperlegible Next) Google Fonts orqali yuklanadi; internet bo'lmasa zaxira
 shriftlar ishlatiladi.
 
 SURAT HUQUQLARI
