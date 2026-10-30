@@ -1,10 +1,10 @@
-import { stages, sources } from './checklist-data.js?v=6';
+import { stages, sources } from './checklist-data.js?v=7';
 import {
   STORAGE_KEY, PREFS_KEY, TAWAF_ROUNDS, MAX_CUSTOM_PER_STAGE,
   emptyState, parseState, serializeState, parsePrefs,
   normalizeTitle, createCustomItem, tripPlan, todayISO, clampTawaf,
-  routeFromHash, nextTasks,
-} from './logic.js?v=6';
+  routeFromHash, nextTasks, saveUnavailable,
+} from './logic.js?v=7';
 
 const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -614,42 +614,79 @@ if (tawafInProgress()) setWakeLock(true);
 
 // Claude artefakti ichida oddiy "download" havolasi ishlamaydi; u yerda PDF platformaning saqlash oynasi orqali beriladi.
 // Oddiy hostingda (GitHub Pages, localhost) window.claude yo'q, bu blok ishlamaydi va havola odatdagidek yuklab oladi.
+// Saqlash imkoni bo'lmagan oynalarda (masalan, Claude ilovasining yon paneli) PDF shu ochiq manzildan ochiladi.
 const PDF_NAME = 'umra-safari-cheklist.pdf';
+const PUBLIC_PDF = 'https://sardorusmonov.github.io/umra-safari/assets/umra-safari-cheklist.pdf';
 
 if (typeof window.claude?.use === 'function') {
-  // Modulni darhol so'raymiz; bosish esa modul tayyor bo'lguncha ham ushlanadi.
-  const downloadsReady = window.claude.use('downloads').catch(() => null);
+  let downloads;          // undefined: hali noma'lum, null: bu oynada saqlab bo'lmaydi
   let saving = false;
+
+  // Asl (mahalliy) manzilni eslab qolamiz: tugma tashqi havolaga aylansa ham fetch shu manzildan bo'ladi.
+  document.querySelectorAll('a[download]').forEach(link => { link.dataset.localHref = link.href; });
+
+  // PDF tugmalarini oddiy tashqi havolaga aylantiradi: bosilganda brauzer uni darhol, to'siqsiz ochadi.
+  function useExternalPdf() {
+    downloads = null;
+    document.querySelectorAll('a[download], a[data-local-href]').forEach(link => {
+      link.href = PUBLIC_PDF;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.removeAttribute('download');
+    });
+  }
+
+  const downloadsReady = window.claude.use('downloads')
+    .catch(() => null)
+    .then(api => { if (api) downloads = api; else useExternalPdf(); return api; });
+
+  // Foydalanuvchi bosadigan tugma orqali ochiladi, shuning uchun brauzer uni reklama oynasi deb to'smaydi.
+  function offerExternalPdf(text) {
+    useExternalPdf();
+    showToast(text, {
+      label: 'PDFni ochish',
+      onClick() {
+        const link = Object.assign(document.createElement('a'), { href: PUBLIC_PDF, target: '_blank', rel: 'noopener noreferrer' });
+        document.body.append(link);
+        link.click();
+        link.remove();
+      },
+    });
+  }
 
   async function savePdf(href) {
     if (saving) return;
     saving = true;
     showToast('PDF tayyorlanmoqda…');
     try {
-      const downloads = await downloadsReady;
-      if (!downloads) {
-        const opened = window.open(href, '_blank', 'noopener');
-        showToast(opened ? 'PDF yangi oynada ochildi.' : 'Bu oynada yuklab olish mavjud emas. Saytni brauzerda oching.');
+      const api = await downloadsReady;
+      if (!api) {
+        offerExternalPdf('Bu oynada faylni saqlab bo‘lmaydi. PDF brauzerda ochiladi.');
         return;
       }
       const response = await fetch(href);
       if (!response.ok) throw Object.assign(new Error(response.statusText), { code: `fayl_${response.status}` });
       const blob = await response.blob();
       if (!blob.size) throw Object.assign(new Error('empty'), { code: 'bo‘sh_fayl' });
-      await downloads.save({ filename: PDF_NAME, data: blob });
+      await api.save({ filename: PDF_NAME, data: blob });
       showToast('PDF saqlandi.');
     } catch (error) {
-      if (error?.code === 'declined') showToast('Saqlash bekor qilindi.');
-      else showToast(`PDFni saqlab bo‘lmadi (${error?.code || error?.message || 'noma’lum xato'}).`);
+      const code = error?.code;
+      if (code === 'declined') showToast('Saqlash bekor qilindi.');
+      else if (code === 'rate_limited') showToast('Saqlash oynasi allaqachon ochiq. Bir ozdan so‘ng qayta urinib ko‘ring.');
+      else if (String(code ?? '').startsWith('fayl_') || code === 'bo‘sh_fayl' || saveUnavailable(code)) {
+        offerExternalPdf('PDFni shu yerda saqlab bo‘lmadi. Uni brauzerda ochish mumkin.');
+      } else showToast(`PDFni saqlab bo‘lmadi (${code || error?.message || 'noma’lum xato'}).`);
     } finally {
       saving = false;
     }
   }
 
   document.addEventListener('click', event => {
-    const link = event.target.closest('a[download]');
+    const link = event.target.closest('a[data-local-href]');
     if (!link) return;
+    if (downloads === null) return; // tashqi havola: brauzer o'zi, to'siqsiz ochadi
     event.preventDefault();
-    savePdf(link.href);
+    savePdf(link.dataset.localHref);
   });
 }

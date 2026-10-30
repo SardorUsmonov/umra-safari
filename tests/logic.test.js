@@ -169,3 +169,13 @@ test('nextTasks tavsiya qilingan bosqichdan boshlab bajarilmagan bandlarni berad
   assert.equal(nextTasks(stages, itemsOf, all, 'docs'), null);
   assert.equal(nextTasks([], itemsOf, new Set()), null);
 });
+
+test('saveUnavailable saqlash imkonsizligini vaqtinchalik xatodan ajratadi', async () => {
+  const { saveUnavailable } = await import('../logic.js');
+  for (const code of ['unavailable', 'not_granted', 'capability_disabled', 'capability_removed', 'nimadir_yangi', undefined]) {
+    assert.equal(saveUnavailable(code), true, String(code));
+  }
+  for (const code of ['declined', 'rate_limited', 'too_large', 'bad_request', 'transform_error']) {
+    assert.equal(saveUnavailable(code), false, code);
+  }
+});

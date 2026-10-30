@@ -176,3 +176,13 @@ export function nextTasks(stages, itemsOf, checked, preferredStageId = null, lim
   }
   return null;
 }
+
+/**
+ * Claude artefaktidagi `downloads.save` xatosi: shu oynada saqlash umuman imkonsiz bo'lsa true
+ * (unda PDF ochiq manzildan ochiladi). `declined`, `rate_limited` kabi vaqtinchalik holatlar false.
+ * Hujjatga ko'ra noma'lum kodlar `unavailable` deb qaraladi.
+ */
+const SAVE_RETRYABLE = new Set(['declined', 'rate_limited', 'too_large', 'bad_request', 'transform_error']);
+export function saveUnavailable(code) {
+  return !SAVE_RETRYABLE.has(String(code ?? ''));
+}
